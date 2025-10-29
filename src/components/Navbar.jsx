@@ -4,8 +4,12 @@ import { IoClose } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { getImageUrl, searchMovies } from "../services/api";
 import { useMovies } from "../context/MoviesContext";
+import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 
 const Navbar = () => {
+  const { openSignIn, user } = useClerk();
+  // const { user } = useUser();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -92,7 +96,7 @@ const Navbar = () => {
               </span>
             </a>
           </div>
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden lg:flex space-x-8">
             <a
               href="#"
               className="text-white hover:text-purple-400 transition-all font-medium"
@@ -120,21 +124,36 @@ const Navbar = () => {
           </nav>
           <div
             ref={searchContainerRef}
-            className="hidden md:block relative search-container"
+            className="hidden lg:block relative search-container"
           >
-            <div className="relative">
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={handleSearchFocus}
-                type="text"
-                placeholder="Search movies..."
-                className="bg-neutral-800/80 text-white px-4 py-2 rounded-full text-sm w-48 focus:w-64 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={handleSearchFocus}
+                  type="text"
+                  placeholder="Search movies..."
+                  className="bg-neutral-800/80 text-white px-4 py-2 rounded-full text-sm w-48 focus:w-64 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                />
 
-              <div className="absolute right-3 top-2.5 ">
-                <CiSearch className="text-gray-400 text-lg" />
+                <div className="absolute right-3 top-2.5 ">
+                  <CiSearch className="text-gray-400 text-lg" />
+                </div>
               </div>
+              {user ? (
+                <UserButton>
+                  <UserButton.MenuItems />
+                </UserButton>
+              ) : (
+                  <button
+                    onClick={() => openSignIn()}
+                    className="bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer"
+                  >
+                    Login
+                  </button>
+               
+              )}
             </div>
             {showSearchResult && searchResult && searchResult.length > 0 && (
               <div className="absolute mt-2 w-72 bg-neutral-800 rounded-lg shadow-lg overflow-hidden z-50">
@@ -189,7 +208,7 @@ const Navbar = () => {
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white"
+            className="lg:hidden text-white"
           >
             {isMobileMenuOpen ? (
               <IoClose className="text-2xl" />
@@ -199,7 +218,7 @@ const Navbar = () => {
           </button>
         </div>
         {isMobileMenuOpen && (
-          <div className="mt-4 pb-4 space-y-4 md:hidden">
+          <div className="mt-4 pb-4 space-y-4 lg:hidden">
             <a
               href="#"
               className="block text-white hover:text-purple-400 transition-colors py-2"
@@ -224,23 +243,35 @@ const Navbar = () => {
             >
               Top Rated
             </a>
-            <div
-              ref={searchContainerRef}
-              className="relative mt-3 search-container"
-            >
-              <div className="relative w-48 focus-within:w-64 transition-all duration-300 bg-neutral-800/80 rounded-full">
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  type="text"
-                  placeholder="Search movies..."
-                  className="w-full bg-transparent text-white text-sm px-4 py-2 rounded-full focus:outline-none"
-                />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <CiSearch className="text-gray-400 text-lg" />
+            <div ref={searchContainerRef} className="relative mt-3 ">
+              <div className="flex flex-col gap-3">
+                <div className="relative w-48 focus-within:w-64 transition-all duration-300 bg-neutral-800/80 rounded-full">
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={handleSearchFocus}
+                    type="text"
+                    placeholder="Search movies..."
+                    className="w-full bg-transparent text-white text-sm px-4 py-2 rounded-full focus:outline-none"
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <CiSearch className="text-gray-400 text-lg" />
+                  </div>
                 </div>
+                {user ? (
+                  <UserButton>
+                    <UserButton.MenuItems />
+                  </UserButton>
+                ) : (
+                  <button
+                    onClick={() => openSignIn()}
+                    className="w-30 bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer"
+                  >
+                    Login
+                  </button>
+                )}
               </div>
+
               {showSearchResult && searchResult && searchResult.length > 0 && (
                 <div className="absolute mt-2 w-full bg-neutral-800 rounded-lg shadow-lg overflow-hidden z-50">
                   <ul className="divide-y divide-neutral-700">
