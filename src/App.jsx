@@ -1,17 +1,33 @@
+import { Route, Routes } from "react-router";
 import Footer from "./components/Footer";
-import MovieContent from "./components/MovieContent";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
+import Watchlist from "./pages/Watchlist";
+import Home from "./pages/Home";
+import { useMovies } from "./context/MoviesContext";
+import MoviesDetails from "./components/MoviesDetails";
 
 const App = () => {
+
+  const { selectedMovieId, closeMoviesDetails } = useMovies();
+
   return (
-    <div className="min-h-screen text-white">
+    <div>
       <Navbar />
-      <main>
-        <MovieContent />
-      </main>
+      <div className="text-white">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/watchlist" element={<Watchlist />} />
+        </Routes>
+        {selectedMovieId && (
+          <MoviesDetails
+            movieId={selectedMovieId}
+            onClose={closeMoviesDetails}
+          />
+        )}
+        <ScrollToTop />
+      </div>
       <Footer />
-      <ScrollToTop />
     </div>
   );
 };

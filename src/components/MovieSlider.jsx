@@ -95,7 +95,7 @@ const MovieSlider = ({ movies, title, subtitle = "", id }) => {
                             {movie.release_date.slice(0, 4)}
                           </span>
                         </div>
-                        <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md flex items-center justify-center gap-1 transition-all text-sm">
+                        <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md flex items-center justify-center gap-1 transition-all text-sm cursor-pointer">
                           <IoMdPlayCircle className="text-xl" />
                           View Details
                         </button>

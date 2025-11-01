@@ -5,11 +5,10 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { getImageUrl, searchMovies } from "../services/api";
 import { useMovies } from "../context/MoviesContext";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { RiMovieFill } from "react-icons/ri";
+import { Link, useLocation, useNavigate } from "react-router";
 
 const Navbar = () => {
-  const { openSignIn, user } = useClerk();
-  // const { user } = useUser();
-
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -17,6 +16,8 @@ const Navbar = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchResult, setShowSearchResult] = useState(false);
+
+  const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
 
   const searchContainerRef = useRef(null);
 
@@ -79,10 +80,24 @@ const Navbar = () => {
     };
   }, []);
 
+  const { openSignIn } = useClerk();
+  const { user } = useUser();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setIsWatchlistOpen(true);
+    } else {
+      setIsWatchlistOpen(false);
+    }
+  }, [location.pathname]);
+
   return (
     <header
       className={`fixed flex w-full z-50 transition-all duration-300  ${
-        isScrolled
+        isScrolled || isWatchlistOpen
           ? "bg-neutral-900/95 backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
@@ -90,69 +105,86 @@ const Navbar = () => {
       <div className="container mx-auto p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link
+              to="/"
+              onClick={() => scrollTo(0, 0)}
+              className="flex items-center"
+            >
               <span className="text-purple-500 font-bold text-3xl">
                 Cine<span className="text-white">Mix</span>
               </span>
-            </a>
+            </Link>
           </div>
-          <nav className="hidden lg:flex space-x-8">
-            <a
-              href="#"
-              className="text-white hover:text-purple-400 transition-all font-medium"
-            >
-              Home
-            </a>
-            <a
-              href="#trending"
-              className="text-white hover:text-purple-400 transition-all font-medium"
-            >
-              Trending
-            </a>
-            <a
-              href="#popular"
-              className="text-white hover:text-purple-400 transition-all font-medium"
-            >
-              Popular
-            </a>
-            <a
-              href="#top-rated"
-              className="text-white hover:text-purple-400 transition-all font-medium"
-            >
-              Top Rated
-            </a>
-          </nav>
+          {!isWatchlistOpen && (
+            <nav className="hidden lg:flex space-x-8">
+              <Link
+                to="/"
+                onClick={() => scrollTo(0, 0)}
+                className="text-white hover:text-purple-400 transition-all font-medium"
+              >
+                Home
+              </Link>
+
+              <a
+                href="#trending"
+                className="text-white hover:text-purple-400 transition-all font-medium"
+              >
+                Trending
+              </a>
+              <a
+                href="#popular"
+                className="text-white hover:text-purple-400 transition-all font-medium"
+              >
+                Popular
+              </a>
+              <a
+                href="#top-rated"
+                className="text-white hover:text-purple-400 transition-all font-medium"
+              >
+                Top Rated
+              </a>
+            </nav>
+          )}
           <div
             ref={searchContainerRef}
             className="hidden lg:block relative search-container"
           >
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  type="text"
-                  placeholder="Search movies..."
-                  className="bg-neutral-800/80 text-white px-4 py-2 rounded-full text-sm w-48 focus:w-64 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                />
+              {!isWatchlistOpen && (
+                <div className="relative">
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={handleSearchFocus}
+                    type="text"
+                    placeholder="Search movies..."
+                    className="bg-neutral-800/80 text-white px-4 py-2 rounded-full text-sm w-48 focus:w-64 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  />
 
-                <div className="absolute right-3 top-2.5 ">
-                  <CiSearch className="text-gray-400 text-lg" />
+                  <div className="absolute right-3 top-2.5 ">
+                    <CiSearch className="text-gray-400 text-lg" />
+                  </div>
                 </div>
-              </div>
+              )}
               {user ? (
                 <UserButton>
-                  <UserButton.MenuItems />
+                  <UserButton.MenuItems>
+                    <UserButton.Action
+                      label="My Watchlist"
+                      labelIcon={<RiMovieFill />}
+                      onClick={() => {
+                        navigate("/watchlist"), scrollTo(0, 0);
+                      }}
+                    />
+                  </UserButton.MenuItems>
                 </UserButton>
               ) : (
-                  <button
-                    onClick={() => openSignIn()}
-                    className="bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer"
-                  >
-                    Login
-                  </button>
-               
+                <button
+                  onClick={() => openSignIn()}
+                  className="bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer"
+                >
+                  Login
+                </button>
               )}
             </div>
             {showSearchResult && searchResult && searchResult.length > 0 && (

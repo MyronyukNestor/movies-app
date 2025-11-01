@@ -17,18 +17,30 @@ const MoviesProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [watchlist, setWatchlist] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("watchlist"));
+      return saved || [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+  }, [watchlist]);
 
   useEffect(() => {
     const fetchMovieData = async () => {
       try {
         setLoading(true);
-        const [trending, popular, topRated, genreList, byGenre] =
-          await Promise.all([
-            fetchTrendingMovies(),
-            fetchPopularMovies(),
-            fetchTopRatedMovies(),
-            fetchGenres(),
-          ]);
+        const [trending, popular, topRated, genreList] = await Promise.all([
+          fetchTrendingMovies(),
+          fetchPopularMovies(),
+          fetchTopRatedMovies(),
+          fetchGenres(),
+        ]);
         setTrendingMovies(trending);
         setPopularMovies(popular);
         setTopRatedMovies(topRated);
@@ -53,6 +65,14 @@ const MoviesProvider = (props) => {
     document.body.style.overflow = "";
   };
 
+  const addToWatchlist = (movie) => {
+    setWatchlist((prev) =>
+      prev.find((m) => m.id === movie.id)
+        ? prev.filter((m) => m.id !== movie.id)
+        : [movie, ...prev]
+    );
+  };
+
   const contextValue = {
     trendingMovies,
     popularMovies,
@@ -63,6 +83,8 @@ const MoviesProvider = (props) => {
     selectedMovieId,
     openMoviesDetails,
     closeMoviesDetails,
+    addToWatchlist,
+    watchlist,
   };
 
   return (

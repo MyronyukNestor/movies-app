@@ -2,14 +2,30 @@ import { useEffect, useState } from "react";
 import { fetchMovieDetails, getImageUrl } from "../services/api";
 import { MdReportGmailerrorred } from "react-icons/md";
 import { IoClose, IoEarth } from "react-icons/io5";
-import { FaStar, FaImdb } from "react-icons/fa";
+import { FaStar, FaImdb, FaCheck } from "react-icons/fa";
 import { IoMdPlayCircle } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
+import { useMovies } from "../context/MoviesContext";
+import { useUser } from "@clerk/clerk-react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const MoviesDetails = ({ movieId, onClose }) => {
+  const notify = () => toast("Login to add to watchlist!");
+
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const movieDate = new Date(movie?.release_date);
+  const movieReleaseMonth = movieDate.toLocaleString("en-US", {
+    month: "long",
+  });
+  const movieReleaseDay = movieDate.getDate();
+  const movieReleaseYear = movieDate.getFullYear();
+
+  const { addToWatchlist, watchlist } = useMovies();
+
+  const { user } = useUser();
 
   useEffect(() => {
     const getMovieDetails = async () => {
@@ -18,7 +34,7 @@ const MoviesDetails = ({ movieId, onClose }) => {
         const movieData = await fetchMovieDetails(movieId);
         setMovie(movieData);
       } catch (error) {
-        setError(true);
+        setError(error);
         console.log(error);
       } finally {
         setLoading(false);
@@ -55,6 +71,19 @@ const MoviesDetails = ({ movieId, onClose }) => {
       }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/95 backdrop-blur-sm overflow-auto"
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
       <div className="relative w-full max-w-5xl bg-neutral-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
@@ -145,7 +174,7 @@ const MoviesDetails = ({ movieId, onClose }) => {
                     )}
                     {movie.release_date && (
                       <span className="text-neutral-300">
-                        {movie.release_date}
+                        {`${movieReleaseMonth} ${movieReleaseDay}, ${movieReleaseYear}`}
                       </span>
                     )}
                     {movie.adult && (
@@ -184,13 +213,29 @@ const MoviesDetails = ({ movieId, onClose }) => {
                   </div>
 
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors">
+                    <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors cursor-pointer">
                       <IoMdPlayCircle className="text-2xl" />
                       Watch Now
                     </button>
-                    <button className="flex gap-2 items-center bg-neutral-700 hover:bg-neutral-600 text-white px-6 py-3 rounded-lg transition-colors">
-                      <FaPlus className="text-xl" />
-                      Add to Watchlist
+                    <button
+                      onClick={() => {
+                        user ? addToWatchlist(movie) : notify();
+                      }}
+                      className={`flex gap-2 items-center  text-white px-6 py-3 rounded-lg transition-colors cursor-pointer ${
+                        watchlist.some((m) => m.id === movie.id) && user
+                          ? "bg-green-700 hover:bg-green-600"
+                          : "bg-neutral-700 hover:bg-neutral-600"
+                      }`}
+                    >
+                      {watchlist.some((m) => m.id === movie.id) && user ? (
+                        <>
+                          <FaCheck /> In Watchlist
+                        </>
+                      ) : (
+                        <>
+                          <FaPlus className="text-xl" /> Add to Watchlist
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>

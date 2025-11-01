@@ -1,17 +1,10 @@
 import { useMovies } from "../context/MoviesContext";
 import GenreSection from "./GenreSection";
 import HeroSection from "./HeroSection";
-import MoviesDetails from "./MoviesDetails";
 import MovieSlider from "./MovieSlider";
 
 const MovieContent = () => {
-  const {
-    trendingMovies,
-    popularMovies,
-    topRatedMovies,
-    selectedMovieId,
-    closeMoviesDetails,
-  } = useMovies();
+  const { trendingMovies, popularMovies, topRatedMovies } = useMovies();
 
   return (
     <div>
@@ -37,9 +30,6 @@ const MovieContent = () => {
           id="top-rated"
         />
       </div>
-      {selectedMovieId && (
-        <MoviesDetails movieId={selectedMovieId} onClose={closeMoviesDetails} />
-      )}
     </div>
   );
 };

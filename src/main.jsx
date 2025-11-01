@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import MoviesProvider from "./context/MoviesContext.jsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { dark } from "@clerk/themes";
+import { BrowserRouter } from "react-router";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -15,13 +16,15 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById("root")).render(
   <MoviesProvider>
-    <ClerkProvider
-      appearance={{
-        theme: dark,
-      }}
-      publishableKey={PUBLISHABLE_KEY}
-    >
-      <App />
-    </ClerkProvider>
+    <BrowserRouter>
+      <ClerkProvider
+        appearance={{
+          theme: dark,
+        }}
+        publishableKey={PUBLISHABLE_KEY}
+      >
+        <App />
+      </ClerkProvider>
+    </BrowserRouter>
   </MoviesProvider>
 );
