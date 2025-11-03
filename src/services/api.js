@@ -73,6 +73,18 @@ export const fetchMovieDetails = async (movieId) => {
   }
 };
 
+export const fetchMovieTrailer = async (movieId) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}&language=en-US`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const searchMovies = async (query) => {
   try {
     const response = await fetch(
@@ -92,4 +104,3 @@ export const getImageUrl = (path, size = "original") => {
     return `https://image.tmdb.org/t/p/${size}/${path}.jpg`;
   }
 };
-

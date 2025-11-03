@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   fetchGenres,
+  fetchMovieTrailer,
   fetchPopularMovies,
   fetchTopRatedMovies,
   fetchTrendingMovies,
@@ -17,6 +18,7 @@ const MoviesProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+
   const [watchlist, setWatchlist] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("watchlist"));

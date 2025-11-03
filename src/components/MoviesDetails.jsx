@@ -8,6 +8,7 @@ import { FaPlus } from "react-icons/fa6";
 import { useMovies } from "../context/MoviesContext";
 import { useUser } from "@clerk/clerk-react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import { Link } from "react-router";
 
 const MoviesDetails = ({ movieId, onClose }) => {
   const notify = () => toast("Login to add to watchlist!");
@@ -213,10 +214,14 @@ const MoviesDetails = ({ movieId, onClose }) => {
                   </div>
 
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors cursor-pointer">
+                    <Link
+                      to={`player/${movie.id}`}
+                      // onClick={onClose}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+                    >
                       <IoMdPlayCircle className="text-2xl" />
-                      Watch Now
-                    </button>
+                      Watch Trailer
+                    </Link>
                     <button
                       onClick={() => {
                         user ? addToWatchlist(movie) : notify();

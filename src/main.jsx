@@ -12,8 +12,6 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
 }
 
-// afterSignOutUrl="/"
-
 createRoot(document.getElementById("root")).render(
   <MoviesProvider>
     <BrowserRouter>

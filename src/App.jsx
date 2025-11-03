@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
@@ -6,6 +6,7 @@ import Watchlist from "./pages/Watchlist";
 import Home from "./pages/Home";
 import { useMovies } from "./context/MoviesContext";
 import MoviesDetails from "./components/MoviesDetails";
+import Player from "./pages/Player";
 
 const App = () => {
 
@@ -18,6 +19,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/player/:id" element={<Player />} />
         </Routes>
         {selectedMovieId && (
           <MoviesDetails

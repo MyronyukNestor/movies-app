@@ -7,6 +7,7 @@ import { IoMdPlayCircle } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { useUser } from "@clerk/clerk-react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import { Link } from "react-router";
 
 const HeroSection = () => {
   const notify = () => toast("Login to add to watchlist!");
@@ -124,9 +125,18 @@ const HeroSection = () => {
               {currentMovie.overview}
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all cursor-pointer">
-                <IoMdPlayCircle className="text-xl" />
-                Watch Now
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Link
+                  to={`player/${currentMovie.id}`}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all cursor-pointer"
+                >
+                  <IoMdPlayCircle className="text-xl" />
+                  Watch Trailer
+                </Link>
               </button>
               <button
                 onClick={(e) => {
